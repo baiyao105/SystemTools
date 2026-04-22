@@ -18,16 +18,13 @@ public class SetVolumeAction(ILogger<SetVolumeAction> logger) : ActionBase<SetVo
     {
         try
         {
-            await Task.Run(() =>
-            {
-                var deviceEnumerator = new MMDeviceEnumeratorWrapper();
-                var device = deviceEnumerator.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia);
-
-                float volume = Settings.VolumePercent / 100f;
-                device.SetMasterVolumeLevelScalar(volume, Guid.Empty);
-
-                _logger.LogInformation($"音量设置为 {Settings.VolumePercent}%");
-            });
+            var deviceEnumerator = new MMDeviceEnumeratorWrapper();
+            var device = deviceEnumerator.GetDefaultAudioEndpoint(
+                EDataFlow.eRender,
+                ERole.eMultimedia);
+            float volume = Settings.VolumePercent / 100f;
+            device.SetMasterVolumeLevelScalar(volume, Guid.Empty);
+            _logger.LogInformation("音量设置为 {Volume}%", Settings.VolumePercent);
         }
         catch (Exception ex)
         {

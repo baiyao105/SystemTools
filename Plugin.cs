@@ -104,18 +104,19 @@ public class Plugin : PluginBase
 
         AppBase.Current.AppStarted += (o, args) =>
         {
+            var floating = IAppHost.GetService<FloatingWindowService>();
+            var theme = IAppHost.GetService<AdaptiveThemeSyncService>();
+            _logger = IAppHost.GetService<ILogger<Plugin>>();
             if (GlobalConstants.MainConfig?.Data.EnableFloatingWindowFeature == true)
             {
-                IAppHost.GetService<FloatingWindowService>()?.Start();
+                floating?.Start();
             }
-            IAppHost.GetService<AdaptiveThemeSyncService>()?.Start();
-            _logger = IAppHost.GetService<ILogger<Plugin>>();
-
+            theme?.Start();
             _logger?.LogInformation("[SystemTools]实验性功能状态: {Status}", experimentalEnabled);
             _logger?.LogInformation("[SystemTools]FFmpeg功能状态: {Status}", ffmpegEnabled);
             if (_ffmpegDisabledDueToMissingDependency)
             {
-                _logger?.LogWarning("[SystemTools]FFmpeg 功能已自动关闭：缺少依赖文件 ffmpeg.exe。");
+                _logger?.LogWarning("[SystemTools]FFmpeg 已自动关闭：缺少 ffmpeg.exe");
             }
 
             if (GlobalConstants.MainConfig?.Data.EnableFaceRecognition == true)
@@ -126,12 +127,12 @@ public class Plugin : PluginBase
                 }
                 else
                 {
-                    _logger?.LogWarning("[SystemTools]人脸识别功能已启用，但缺少必要的文件或文件夹（Models、runtimes、OpenCvSharp.Extensions.dll、OpenCvSharp.dll、DlibDotNet.dll），已跳过注册。");
+                    _logger?.LogWarning("[SystemTools]人脸识别依赖缺失，已跳过注册");
                 }
             }
             else if (_faceRecognitionDisabledDueToMissingDependency)
             {
-                _logger?.LogWarning("[SystemTools]人脸识别功能已自动关闭：缺少 runtimes、Models 或 OpenCvSharp/Dlib 依赖，并已清理对应验证器配置。");
+                _logger?.LogWarning("[SystemTools]人脸识别已自动关闭：缺少依赖");
             }
             _logger?.LogInformation("[SystemTools]SystemTools 启动完成");
         };

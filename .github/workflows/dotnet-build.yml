@@ -31,7 +31,7 @@ jobs:
         run: dotnet restore
 
       - name: Build CIPX
-        run: dotnet publish -p:CreateCipx=true -p:Configuration=Release --no-restore
+        run: dotnet publish -p:CreateCipx=true --configuration Release --no-restore
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v5
